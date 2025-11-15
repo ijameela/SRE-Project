@@ -1,0 +1,26 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: service-alert-rules
+  namespace: monitoring
+spec:
+  groups:
+  - name: pod-failure-alerts
+    rules:
+    - alert: PodRestartingTooMuch
+      expr: kube_pod_container_status_restarts_total{namespace="app"} > 0
+      for: 30s
+      labels:
+        severity: critical
+      annotations:
+        summary: "A pod in namespace 'app' is crashing"
+        description: "Pod {{ $labels.pod }} is restarting repeatedly."
+
+    - alert: PodLivenessProbeFailed
+      expr: expr:kube_pod_container_status_waiting_reason{namespace="app",reason="CreateContainerConfigError"} > 0
+      for: 15s
+      labels:
+        severity: warning
+      annotations:
+        summary: "Liveness probe failure detected"
+        description: "Liveness probe failed for pod {{ $labels.pod }}."

@@ -1,0 +1,20 @@
+version: "3.9"
+
+services:
+  api:
+    build: ./api
+    container_name: api-service
+    ports:
+      - "3000:3000"
+
+  auth:
+    build: ./auth
+    container_name: auth-service
+    ports:
+      - "4000:4000"
+
+  images:
+    build: ./images
+    container_name: images-service
+    ports:
+      - "8000:8000"
